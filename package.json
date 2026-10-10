@@ -1,6 +1,6 @@
 {
   "name": "joqbay-3d-parametric-studio",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,10 +13,13 @@
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "lint:check": "oxlint . && eslint .",
+    "test:ci": "vitest run"
   },
   "dependencies": {
-    "vue": "^3.5.42"
+    "vue": "^3.5.42",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.5",
@@ -41,7 +44,8 @@
     "vite-plugin-vue-devtools": "^8.2.1",
     "vitest": "^4.1.11",
     "vue-eslint-parser": "^10.4.1",
-    "vue-tsc": "^3.3.11"
+    "vue-tsc": "^3.3.11",
+    "@types/three": "^0.180.0"
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"

@@ -1,54 +1,107 @@
-# .
+# JOQBAY / 3D — Parametric Studio
 
-This template should help get you started developing with Vue 3 in Vite.
+**Um laboratório público de modelagem paramétrica 3D para a web.**
 
-## Recommended IDE Setup
+[![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vue.js&logoColor=white)](https://vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Three.js](https://img.shields.io/badge/Three.js-WebGL-222?logo=threedotjs&logoColor=white)](https://threejs.org/)
+[![Vitest](https://img.shields.io/badge/Tests-Vitest-729b1b)](https://vitest.dev/)
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+> **Estado:** demonstração interativa de portfólio, em evolução. **Não é software de produção industrial** nem contém regras validadas para fabricação.
 
-## Recommended Browser Setup
+O projeto permite configurar um módulo conceitual de marcenaria por **largura, altura, profundidade, espessura e acabamento**. O visitante pode orbitar a câmera, selecionar painéis individuais, alternar tema escuro/claro, escolher três modelos iniciais e exportar uma imagem PNG ou um JSON de demonstração.
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+![Imagem de apresentação do Parametric Studio](src/assets/studio-hero.webp)
 
-## Type Support for `.vue` Imports in TS
+## Funcionalidades disponíveis
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Interface responsiva e _mobile-first_, com navegação lateral e navegação adaptada para celular.
+- Páginas de visão geral, configurador 3D, biblioteca de modelos e arquitetura.
+- Temas **dark/light**, com preferência salva no navegador.
+- Prévia 3D real com **Three.js**, seleção de painéis, zoom e órbita.
+- Campos dimensionais em milímetros, validação de entrada e feedback.
+- Prévia geométrica isolada em um **adaptador local substituível**, sem exigir servidor ou contas.
+- Modelos base, aéreo e torre; persistência do rascunho no `localStorage`.
+- Exportação de PNG da cena e JSON conceitual.
+- Testes do adaptador de prévia e da integração básica da interface.
 
-## Customize configuration
+## Executar localmente
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Requisitos: **Node.js 24 LTS** (ou versão compatível com `package.json`), npm e navegador com WebGL.
 
-## Project Setup
-
-```sh
+```powershell
+# PowerShell — na pasta do projeto
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+Abra o endereço exibido pelo Vite, normalmente `http://localhost:5173`.
 
-```sh
+> Importante para quem aplicar o patch ao scaffold anterior: `npm install` instalará `three` e `@types/three` e atualizará `package-lock.json`. **Versione o lock atualizado** no mesmo PR. Após isso, instalações limpas em CI podem usar `npm ci`.
+
+## Qualidade e testes
+
+```powershell
+npm run test:ci
+npm run type-check
+npm run lint:check
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+O `npm run lint` do scaffold corrige arquivos automaticamente; para uma checagem sem modificar arquivos, use `npm run lint:check`.
 
-```sh
-npm run test:unit
+Testes existentes verificam composição de painéis, dimensões derivadas, rejeição de entradas inválidas, fluxo inicial da interface e alternância de tema. O ambiente de teste da aplicação simula o viewport WebGL; não substitui validação manual 3D nem um teste E2E no navegador real.
+
+## Visão arquitetural
+
+```text
+Browser / Vue 3 + TypeScript
+│
+├── Views + Components ───────── UI, formulários, navegação e temas
+├── Contracts ───────────────── formatos de configuração e painéis
+├── Local Preview Adapter ───── MOCK GEOMÉTRICO TEMPORÁRIO
+│                                 (não autoritativo, não fabricável)
+└── Three Renderer Adapter ──── WebGL, câmera, meshes e interação
+
+Futuro:
+       Vue  ── HTTP/JSON ──► NestJS / Application / Domain
+                                  │
+                                  └─► Python (otimização especializada)
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+**Separação fundamental:** Vue e Three.js **não determinam regras industriais autoritativas**. Atualmente o cálculo local existe **somente para demonstração visual**. Numa evolução com servidor, o adapter será substituído por um cliente HTTP; validações e regras de fabricação pertencerão ao domínio do backend em NestJS, independentemente do renderer.
 
-```sh
-npm run lint
-```
+| Área               | Responsabilidade                                            |
+| ------------------ | ----------------------------------------------------------- |
+| `src/contracts/`   | Tipos independentes de framework; formato de entrada/saída. |
+| `src/application/` | Presets e adaptador local provisório de prévia geométrica.  |
+| `src/composables/` | Estado/persistência do tema e do rascunho.                  |
+| `src/components/`  | Controles, navegação e viewport Vue.                        |
+| `src/views/`       | Páginas e composição da experiência.                        |
+| `src/three/`       | Tradução para Three.js; GPU, câmera, raycasting e cleanup.  |
+| `src/styles/`      | Tokens globais de tema e estilos compartilhados.            |
+
+Leia [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) para decisões e limites, e [docs/ROADMAP.md](docs/ROADMAP.md) para o planejamento.
+
+## Publicar na Vercel
+
+1. Faça push do repositório para o GitHub.
+2. Importe o repositório na Vercel como projeto **Vite**.
+3. Instale as dependências e use `npm run build` para produzir `dist/`.
+4. Configure o diretório de saída como `dist`.
+
+É um projeto estático e pode ser hospedado sem servidor. Não há rotas HTML adicionais: a navegação usa fragmentos (`#studio`, `#templates`), compatíveis com hosting estático simples.
+
+O botão **Exportar JSON** gera dados locais e **não** salva registros no servidor. Não há autenticação, contas, preços, ordens de produção ou plano de corte operacional na versão atual.
+
+## Relação com o ecossistema SketchUp
+
+Existe um **projeto privado e independente** em desenvolvimento voltado a uma extensão paramétrica para SketchUp, cuja integração com a API do SketchUp utiliza **Ruby**. Este repositório público é **um estudo paralelo de tecnologias web**, sem publicar código, ativos proprietários, fórmulas internas ou outras informações do plugin comercial.
+
+A evolução de backend web considerada para o ecossistema mais amplo — incluindo possíveis aplicações de ERP, PCP e serviços relacionados — é **NestJS + TypeScript**, com **Python** como possível serviço especializado para otimização. Esses sistemas **não estão implementados aqui**.
+
+## Colaboração e contexto
+
+A implementação explora práticas de desenvolvimento assistido por IA, sempre com revisão humana de arquitetura, requisitos, testes e mudanças. Nomes de símbolos estão em inglês; a documentação e explicações de domínio estão em português.
+
+**Licenciamento:** o repositório pode ser público para consulta e avaliação; não há licença de reutilização definida neste momento. Uma licença explícita deverá ser escolhida antes de disponibilizá-lo como open source.
