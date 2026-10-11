@@ -10,8 +10,9 @@ import HomeView from '@/views/HomeView.vue'
 import StudioView from '@/views/StudioView.vue'
 import TemplatesView from '@/views/TemplatesView.vue'
 import AboutView from '@/views/AboutView.vue'
+import EnvironmentView from '@/views/EnvironmentView.vue'
 
-const allowedViews: AppView[] = ['home', 'studio', 'templates', 'about']
+const allowedViews: AppView[] = ['home', 'studio', 'environment', 'templates', 'about']
 function readLocation(): AppView {
   const name = window.location.hash.slice(1) as AppView
   return allowedViews.includes(name) ? name : 'home'
@@ -68,6 +69,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
           :model-value="config"
           @update:model-value="updateConfig"
         />
+        <EnvironmentView v-else-if="view === 'environment'" />
         <TemplatesView v-else-if="view === 'templates'" @preset="openPreset" />
         <AboutView v-else />
       </main>

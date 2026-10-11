@@ -1,9 +1,10 @@
 import type { CabinetConfig, CabinetKind, FinishId } from '@/contracts/studio'
 
 export const finishes: Record<FinishId, { label: string; hex: string; description: string }> = {
-  graphite: { label: 'Grafite', hex: '#4b5662', description: 'MDF cinza profundo' },
-  oak: { label: 'Carvalho', hex: '#be9567', description: 'Madeirado natural' },
-  linen: { label: 'Linho', hex: '#d5cbbb', description: 'Tom neutro suave' },
+  graphite: { label: 'Grafite', hex: '#50555c', description: 'Cinza profundo acetinado' },
+  oak: { label: 'Carvalho', hex: '#b58c61', description: 'Madeirado natural' },
+  linen: { label: 'Linho', hex: '#d5cbbb', description: 'Neutro quente' },
+  white: { label: 'Branco TX', hex: '#e8e6e0', description: 'Branco texturizado' },
 }
 
 export const presets: ReadonlyArray<{
@@ -14,25 +15,27 @@ export const presets: ReadonlyArray<{
   config: CabinetConfig
 }> = [
   {
-    kind: 'base',
-    label: 'Balcão base',
-    eyebrow: '01 / BASE',
-    description: 'Corpo para bancada, com cinco painéis conceituais.',
+    kind: 'counter',
+    label: 'Balcão',
+    eyebrow: '01 / BALCÃO',
+    description: 'Balcão com fundo de 6 mm, estrutura configurável e portas opcionais.',
     config: {
-      kind: 'base',
+      kind: 'counter',
       name: 'Balcão gourmet',
       width: 900,
       height: 760,
       depth: 560,
       thickness: 18,
       finish: 'oak',
+      structure: 'sides-through',
+      front: 'doors',
     },
   },
   {
     kind: 'wall',
-    label: 'Armário aéreo',
+    label: 'Aéreo',
     eyebrow: '02 / AÉREO',
-    description: 'Módulo compacto para composição suspensa.',
+    description: 'Armário suspenso com proporções compactas e acabamento ajustável.',
     config: {
       kind: 'wall',
       name: 'Aéreo cozinha',
@@ -41,13 +44,15 @@ export const presets: ReadonlyArray<{
       depth: 350,
       thickness: 18,
       finish: 'linen',
+      structure: 'sides-through',
+      front: 'doors',
     },
   },
   {
     kind: 'tower',
-    label: 'Torre vertical',
+    label: 'Torre',
     eyebrow: '03 / TORRE',
-    description: 'Volume alto para estudos de proporção.',
+    description: 'Módulo alto para composições verticais e estudos de ambiente.',
     config: {
       kind: 'tower',
       name: 'Torre multiuso',
@@ -56,6 +61,8 @@ export const presets: ReadonlyArray<{
       depth: 580,
       thickness: 18,
       finish: 'graphite',
+      structure: 'horizontal-through',
+      front: 'doors',
     },
   },
 ]

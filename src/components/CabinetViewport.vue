@@ -8,6 +8,8 @@ const emit = defineEmits<{ select: [id: string | null] }>()
 const container = ref<HTMLDivElement | null>(null)
 const renderer = ref<ReturnType<typeof createCabinetRenderer> | null>(null)
 const errorMessage = ref('')
+const exploded = ref(false)
+const autoRotate = ref(false)
 
 onMounted(() => {
   if (!container.value) return
@@ -15,6 +17,8 @@ onMounted(() => {
     renderer.value = createCabinetRenderer(container.value, (id) => emit('select', id))
     renderer.value.updatePreview(props.model, props.color, props.selectedId)
     renderer.value.frameModel()
+    renderer.value.setExploded(exploded.value)
+    renderer.value.setAutoRotate(autoRotate.value)
   } catch {
     errorMessage.value = 'A visualização 3D precisa de um navegador com WebGL habilitado.'
   }
@@ -31,6 +35,15 @@ watch(
 )
 onUnmounted(() => renderer.value?.dispose())
 
+function toggleExploded() {
+  exploded.value = !exploded.value
+  renderer.value?.setExploded(exploded.value)
+}
+function toggleAutoRotate() {
+  autoRotate.value = !autoRotate.value
+  renderer.value?.setAutoRotate(autoRotate.value)
+}
+
 function downloadImage() {
   if (!renderer.value) return
   const anchor = document.createElement('a')
@@ -45,6 +58,22 @@ function downloadImage() {
     <div class="viewport-toolbar">
       <span class="live-label"><span class="live-dot" /> LIVE 3D PREVIEW</span>
       <div class="viewport-actions">
+        <button
+          type="button"
+          class="viewport-button"
+          :aria-pressed="exploded"
+          @click="toggleExploded"
+        >
+          {{ exploded ? 'Reunir peças' : 'Vista explodida' }}
+        </button>
+        <button
+          type="button"
+          class="viewport-button"
+          :aria-pressed="autoRotate"
+          @click="toggleAutoRotate"
+        >
+          {{ autoRotate ? 'Pausar giro' : 'Giro automático' }}
+        </button>
         <button
           type="button"
           class="viewport-button"
@@ -179,6 +208,27 @@ function downloadImage() {
     bottom: 10px;
     left: 10px;
     font-size: 9px;
+  }
+}
+</style>
+
+<style scoped>
+@media (max-width: 690px) {
+  .viewport-toolbar {
+    align-items: flex-start;
+  }
+  .viewport-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 68%;
+  }
+  .viewport-button {
+    min-height: 34px;
+  }
+  .live-label {
+    font-size: 8px;
+    padding: 8px;
+    white-space: nowrap;
   }
 }
 </style>

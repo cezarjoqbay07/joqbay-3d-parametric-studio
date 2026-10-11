@@ -19,6 +19,18 @@ describe('App shell', () => {
     wrapper.unmount()
   })
 
+  it('opens the kitchen composition from the sidebar', async () => {
+    window.location.hash = '#home'
+    const wrapper = mount(App)
+    await wrapper
+      .findAll('.nav-link')
+      .find((button) => button.text().includes('Ambiente cozinha'))!
+      .trigger('click')
+    expect(wrapper.text()).toContain('Composição de cozinha')
+    expect(wrapper.findAll('.environment-module')).toHaveLength(4)
+    wrapper.unmount()
+  })
+
   it('switches visual themes without touching the cabinet configuration', async () => {
     window.location.hash = '#home'
     const wrapper = mount(App)

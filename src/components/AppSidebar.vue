@@ -7,6 +7,7 @@ const emit = defineEmits<{ navigate: [view: AppView]; close: [] }>()
 const navigation: Array<{ id: AppView; label: string; icon: string; hint?: string }> = [
   { id: 'home', label: 'Visão geral', icon: 'home' },
   { id: 'studio', label: 'Configurador 3D', icon: 'cube', hint: 'LIVE' },
+  { id: 'environment', label: 'Ambiente cozinha', icon: 'layers', hint: 'NEW' },
   { id: 'templates', label: 'Modelos', icon: 'layers' },
   { id: 'about', label: 'Sobre o projeto', icon: 'info' },
 ]
@@ -60,7 +61,7 @@ function navigate(view: AppView) {
       </button>
     </div>
     <div class="sidebar-bottom">
-      <span class="status-point" /> Portfolio demo <span class="sidebar-version">v0.1.0</span>
+      <span class="status-point" /> Portfolio demo <span class="sidebar-version">v0.2.0</span>
     </div>
   </aside>
 </template>

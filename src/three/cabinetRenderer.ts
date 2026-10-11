@@ -93,33 +93,60 @@ export function createCabinetRenderer(
   let currentSelected: string | null = null
   let frame = 0
   let disposed = false
+  let explodeTarget = 0
+  let explodeProgress = 0
   let pointerStart: { x: number; y: number } | null = null
 
   function disposePanels() {
     for (const child of [...group.children]) {
       group.remove(child)
-      if (child instanceof Mesh) {
-        child.geometry.dispose()
-        const material = child.material
-        if (Array.isArray(material)) material.forEach((item) => item.dispose())
-        else material.dispose()
-      }
-      if (child instanceof LineSegments) {
-        child.geometry.dispose()
-        const material = child.material
-        if (Array.isArray(material)) material.forEach((item) => item.dispose())
-        else material.dispose()
-      }
+      child.traverse((object) => {
+        if (object instanceof Mesh || object instanceof LineSegments) {
+          object.geometry.dispose()
+          const materials = Array.isArray(object.material) ? object.material : [object.material]
+          materials.forEach((material) => material.dispose())
+        }
+      })
     }
     meshes.length = 0
+  }
+
+  /** Puxadores são decoração da cena, não ferragens especificadas pelo domínio. */
+  function addIndicativeHandle(
+    panelId: string,
+    mesh: Mesh,
+    width: number,
+    height: number,
+    depth: number,
+  ) {
+    const door = panelId.includes('door-')
+    const drawer = panelId.includes('drawer-front-')
+    if (!door && !drawer) return
+    const handle = new Mesh(
+      new BoxGeometry(
+        door ? 0.009 : Math.min(width * 0.52, 0.25),
+        door ? Math.min(height * 0.17, 0.15) : 0.009,
+        0.014,
+      ),
+      new MeshStandardMaterial({ color: '#bac5c9', roughness: 0.29, metalness: 0.75 }),
+    )
+    const isLeft = panelId.endsWith('door-1')
+    const isRight = panelId.endsWith('door-2')
+    const x = isLeft ? width / 2 - 0.045 : isRight ? -width / 2 + 0.045 : 0
+    handle.position.set(x, drawer ? height * 0.28 : 0, depth / 2 + 0.009)
+    handle.castShadow = true
+    mesh.add(handle)
   }
 
   function updateSelection(id: string | null) {
     currentSelected = id
     for (const mesh of meshes) {
       const material = mesh.material as MeshStandardMaterial
-      material.emissive = new Color(mesh.userData.id === id ? '#2e8f82' : '#000000')
-      material.emissiveIntensity = mesh.userData.id === id ? 0.42 : 0
+      material.emissive = new Color(
+        mesh.userData.id === id || mesh.userData.moduleId === id ? '#2e8f82' : '#000000',
+      )
+      material.emissiveIntensity =
+        mesh.userData.id === id || mesh.userData.moduleId === id ? 0.42 : 0
     }
   }
 
@@ -134,7 +161,10 @@ export function createCabinetRenderer(
       const mesh = new Mesh(
         new BoxGeometry(width, height, depth),
         new MeshStandardMaterial({
-          color: panel.edge === 'back' ? new Color(color).multiplyScalar(0.79) : new Color(color),
+          color:
+            panel.edge === 'back'
+              ? new Color(panel.color ?? color).multiplyScalar(0.78)
+              : new Color(panel.color ?? color),
           roughness: 0.69,
           metalness: 0.025,
         }),
@@ -145,7 +175,24 @@ export function createCabinetRenderer(
       mesh.position.set(x, y, z)
       mesh.castShadow = true
       mesh.receiveShadow = true
+      addIndicativeHandle(panel.id, mesh, width, height, depth)
       mesh.userData.id = panel.id
+      mesh.userData.moduleId = panel.id.includes('/') ? panel.id.split('/')[0] : null
+      mesh.userData.restPosition = mesh.position.clone()
+      // O deslocamento de apresentação não altera dimensões nem regras de peças.
+      const explodedDirection =
+        panel.edge === 'front'
+          ? new Vector3(0, 0, 0.25)
+          : panel.id.endsWith('left')
+            ? new Vector3(-0.15, 0, 0)
+            : panel.id.endsWith('right')
+              ? new Vector3(0.15, 0, 0)
+              : panel.id.endsWith('top')
+                ? new Vector3(0, 0.14, 0)
+                : panel.id.endsWith('bottom')
+                  ? new Vector3(0, -0.12, 0)
+                  : new Vector3(0, 0, -0.18)
+      mesh.userData.explodedDirection = explodedDirection
       group.add(mesh)
       meshes.push(mesh)
 
@@ -153,8 +200,7 @@ export function createCabinetRenderer(
         new EdgesGeometry(mesh.geometry),
         new LineBasicMaterial({ color: 0x12181d, transparent: true, opacity: 0.5 }),
       )
-      outline.position.copy(mesh.position)
-      group.add(outline)
+      mesh.add(outline)
     }
     updateSelection(selectedId)
   }
@@ -183,6 +229,12 @@ export function createCabinetRenderer(
 
   function render() {
     if (disposed) return
+    explodeProgress += (explodeTarget - explodeProgress) * 0.1
+    for (const mesh of meshes) {
+      mesh.position
+        .copy(mesh.userData.restPosition as Vector3)
+        .addScaledVector(mesh.userData.explodedDirection as Vector3, explodeProgress)
+    }
     controls.update()
     renderer.render(scene, camera)
     frame = requestAnimationFrame(render)
@@ -217,6 +269,13 @@ export function createCabinetRenderer(
     updatePreview,
     updateSelection,
     frameModel,
+    setExploded: (value: boolean) => {
+      explodeTarget = value ? 1 : 0
+    },
+    setAutoRotate: (value: boolean) => {
+      controls.autoRotate = value
+      controls.autoRotateSpeed = 0.75
+    },
     capturePng: () => {
       renderer.render(scene, camera)
       return renderer.domElement.toDataURL('image/png')

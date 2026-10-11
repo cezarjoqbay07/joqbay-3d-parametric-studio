@@ -9,7 +9,7 @@ const emit = defineEmits<{ preset: [kind: CabinetKind] }>()
     <div class="simple-intro">
       <p class="eyebrow">EXPLORE / TEMPLATES</p>
       <h1>Modelos para começar.</h1>
-      <p>Três pontos de partida para experimentar dimensões, proporções e acabamentos.</p>
+      <p>Três modelos de partida para experimentar dimensões, proporções e acabamentos.</p>
     </div>
     <div class="template-list">
       <button

@@ -6,7 +6,7 @@ import UiIcon from '@/components/UiIcon.vue'
 const emit = defineEmits<{
   start: []
   preset: [kind: CabinetKind]
-  navigate: [view: 'templates' | 'about']
+  navigate: [view: 'templates' | 'about' | 'environment']
 }>()
 </script>
 <template>
@@ -77,6 +77,19 @@ const emit = defineEmits<{
         </div>
       </button>
     </div>
+    <section class="environment-promo">
+      <div>
+        <p class="eyebrow">NEW / COMPOSIÇÃO 3D</p>
+        <h2>Uma cozinha. Vários módulos.</h2>
+        <p>
+          Combine balcão, gaveteiro, torre e aéreo num ambiente linear demonstrativo. Selecione e
+          personalize cada volume.
+        </p>
+      </div>
+      <button type="button" class="primary-button" @click="emit('navigate', 'environment')">
+        Explorar ambiente <UiIcon name="arrow" :size="16" />
+      </button>
+    </section>
     <div class="features-strip">
       <div>
         <UiIcon name="cube" :size="21" /><strong>Visualização 3D</strong
@@ -408,6 +421,39 @@ h1 em {
   .features-strip > div + div {
     border-left: 0;
     border-top: 1px solid var(--line);
+  }
+}
+</style>
+
+<style scoped>
+.environment-promo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid var(--active-border);
+  border-radius: 16px;
+  background: linear-gradient(120deg, var(--panel-bg), var(--active-nav));
+  padding: 26px;
+  margin: 28px 0;
+}
+.environment-promo h2 {
+  margin: 8px 0;
+  font-size: 24px;
+}
+.environment-promo p:not(.eyebrow) {
+  max-width: 530px;
+  color: var(--muted-strong);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.environment-promo .primary-button {
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .environment-promo {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 </style>

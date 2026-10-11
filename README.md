@@ -9,7 +9,7 @@
 
 > **Estado:** demonstração interativa de portfólio, em evolução. **Não é software de produção industrial** nem contém regras validadas para fabricação.
 
-O projeto permite configurar um módulo conceitual de marcenaria por **largura, altura, profundidade, espessura e acabamento**. O visitante pode orbitar a câmera, selecionar painéis individuais, alternar tema escuro/claro, escolher três modelos iniciais e exportar uma imagem PNG ou um JSON de demonstração.
+O projeto permite configurar um módulo conceitual de marcenaria por **largura, altura, profundidade, espessura, estrutura, frente e acabamento**. O visitante pode orbitar a câmera, selecionar painéis individuais, alternar tema escuro/claro, escolher três modelos iniciais, explorar uma composição linear de cozinha e exportar uma imagem PNG ou um JSON de demonstração.
 
 ![Imagem de apresentação do Parametric Studio](src/assets/studio-hero.webp)
 
@@ -21,9 +21,19 @@ O projeto permite configurar um módulo conceitual de marcenaria por **largura, 
 - Prévia 3D real com **Three.js**, seleção de painéis, zoom e órbita.
 - Campos dimensionais em milímetros, validação de entrada e feedback.
 - Prévia geométrica isolada em um **adaptador local substituível**, sem exigir servidor ou contas.
-- Modelos base, aéreo e torre; persistência do rascunho no `localStorage`.
+- Modelos **balcão, aéreo e torre**; persistência do rascunho no `localStorage`.
+- Alternância entre **laterais passantes** e **topo/base passantes** com geometria recalculada.
+- **Tampo e base com profundidade total**, fundo demonstrativo de **6 mm** separado da espessura estrutural.
+- Frentes opcionais (sem portas, duas portas, três frentes de gaveta ilustrativas).
+- Quatro acabamentos: grafite, carvalho, linho e branco TX.
+- **Ambiente cozinha**: balcão, gaveteiro conceitual, torre fria conceitual e aéreo, com seleção e ajuste de medidas/acabamentos por módulo.
+- Recursos Three.js de **vista explodida animada** e **giro automático**, além de órbita, seleção e exportação.
 - Exportação de PNG da cena e JSON conceitual.
 - Testes do adaptador de prévia e da integração básica da interface.
+
+## Limites explícitos da geometria
+
+Esta versão **não** é um configurador de fabricação: os painéis são formas básicas ilustrativas. O fundo tem espessura visual de 6 mm, mas **não há rasgo, rebater ou instalação**; as portas não possuem dobradiças e seus puxadores são puramente visuais; as frentes de gaveta não representam caixas, fundos, corrediças ou ferragens; a torre fria **não inclui geladeira**. A cozinha é uma **composição linear pré-definida**, sem paredes, bancadas de pedra, eletrodomésticos ou ergonomia de ambiente. Dimensões e área são apenas referências para estudo visual.
 
 ## Executar localmente
 
@@ -50,7 +60,7 @@ npm run build
 
 O `npm run lint` do scaffold corrige arquivos automaticamente; para uma checagem sem modificar arquivos, use `npm run lint:check`.
 
-Testes existentes verificam composição de painéis, dimensões derivadas, rejeição de entradas inválidas, fluxo inicial da interface e alternância de tema. O ambiente de teste da aplicação simula o viewport WebGL; não substitui validação manual 3D nem um teste E2E no navegador real.
+Testes cobrem a estrutura passante, o fundo de 6 mm, as frentes de portas/gaveta ilustrativas, a composição de cozinha e a edição isolada de módulos, além de validação, interação Vue e navegação. O ambiente de teste da aplicação simula o viewport WebGL; não substitui validação manual 3D nem um teste E2E no navegador real.
 
 ## Visão arquitetural
 
@@ -61,6 +71,7 @@ Browser / Vue 3 + TypeScript
 ├── Contracts ───────────────── formatos de configuração e painéis
 ├── Local Preview Adapter ───── MOCK GEOMÉTRICO TEMPORÁRIO
 │                                 (não autoritativo, não fabricável)
+├── Kitchen Composition ──────── combinação e posicionamento dos módulos
 └── Three Renderer Adapter ──── WebGL, câmera, meshes e interação
 
 Futuro:
@@ -92,7 +103,7 @@ Leia [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) para decisões e limites, e [d
 
 É um projeto estático e pode ser hospedado sem servidor. Não há rotas HTML adicionais: a navegação usa fragmentos (`#studio`, `#templates`), compatíveis com hosting estático simples.
 
-O botão **Exportar JSON** gera dados locais e **não** salva registros no servidor. Não há autenticação, contas, preços, ordens de produção ou plano de corte operacional na versão atual.
+O botão **Exportar JSON** gera dados locais e **não** salva registros no servidor. A composição de ambiente não é persistida nesta edição: use **Restaurar composição** para recuperar o cenário inicial. Não há autenticação, contas, preços, ordens de produção ou plano de corte operacional na versão atual.
 
 ## Relação com o ecossistema SketchUp
 

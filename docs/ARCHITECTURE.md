@@ -72,3 +72,13 @@ No NestJS, o domínio deve permanecer independente de controllers HTTP, banco, T
 ## 7. Segurança e honestidade técnica
 
 Esta demo não possui login, banco ou dados pessoais. O visitante não pode inferir que peças renderizadas estão prontas para fabricação. Na migração para NestJS, toda entrada deve ser validada novamente no servidor; validação HTML é somente conveniência de interface.
+
+## Evolução v0.2 — estrutura e composição
+
+- `src/application/localPreviewAdapter.ts` produz modelos **nominais de apresentação**: alternância de lados passantes / horizontais passantes, tampo e base até a profundidade externa, fundo visual de 6 mm, portas ou frentes de gaveta simbólicas. Não contém regras de fabricação certificadas.
+- `src/application/kitchenComposition.ts` compõe quatro modelos usando **o mesmo contrato** `CabinetPreview` e mantém IDs por módulo (`counter/left`, `drawers/drawer-front-1`, ...). Cada painel pode informar sua cor, sem acoplar o gerador geométrico ao Three.js.
+- `src/views/EnvironmentView.vue` é responsável por apresentação, seleção e edição do módulo selecionado. Não calcula a posição dos painéis.
+- `src/three/cabinetRenderer.ts` interpreta dados no espaço da cena; a vista explodida e a rotação são **efeitos de visualização**, nunca mudanças no modelo geométrico recebido.
+- A futura API NestJS poderá substituir os adaptadores de demonstração, mantendo o contrato de saída. O mapeamento visual `mm → scene units` continuará no renderer.
+
+**Não implementado:** montagem de cozinha automática por IA, armazenamento em servidor, gavetas completas, dispositivos de fixação, rasgos de fundo, plano de corte, eletrodomésticos e iluminação fotorealista.

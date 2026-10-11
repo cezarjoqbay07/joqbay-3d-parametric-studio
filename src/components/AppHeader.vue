@@ -8,6 +8,7 @@ const emit = defineEmits<{ menu: []; themeToggle: []; navigate: [view: AppView] 
 const labels: Record<AppView, string> = {
   home: 'Visão geral',
   studio: 'Configurador 3D',
+  environment: 'Ambiente cozinha',
   templates: 'Biblioteca de modelos',
   about: 'Sobre o projeto',
 }

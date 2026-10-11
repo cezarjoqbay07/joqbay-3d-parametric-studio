@@ -30,3 +30,15 @@ O planejamento abaixo indica direção, **não promessa de recursos existentes**
 - [ ] Serviço Python dedicado à otimização de chapas, se necessário
 
 A integração Ruby com SketchUp pertence a **outro projeto privado**, fora do escopo deste repositório.
+
+### Entrega v0.2 — demonstração de composição
+
+- [x] Renomear "Base" para "Balcão" na navegação dos modelos.
+- [x] Estrutura de laterais ou horizontais passantes (prévia geométrica).
+- [x] Fundo visual de 6 mm e horizontais com profundidade total.
+- [x] Duas portas ou três frentes de gaveta ilustrativas.
+- [x] Quatro acabamentos.
+- [x] Cozinha linear de quatro módulos com edição independente.
+- [x] Vista explodida e giro automático da cena.
+- [ ] Integração HTTP/NestJS com domínio autoritativo.
+- [ ] Planos de corte, ferragens, montagem industrial e gavetas reais.

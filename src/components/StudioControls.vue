@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import { finishes, getPreset, presets } from '@/application/studioPresets'
-import type { CabinetConfig, CabinetKind, FinishId } from '@/contracts/studio'
+import type {
+  CabinetConfig,
+  CabinetKind,
+  FinishId,
+  StructureMode,
+  FrontMode,
+} from '@/contracts/studio'
 
 const props = defineProps<{ modelValue: CabinetConfig }>()
 const emit = defineEmits<{ 'update:modelValue': [config: CabinetConfig] }>()
+const structureOptions = [
+  { value: 'sides-through', label: 'Laterais passantes' },
+  { value: 'horizontal-through', label: 'Topo e base passantes' },
+] as const
 const dimensions = [
   { key: 'width', label: 'Largura', min: 300, max: 2400 },
   { key: 'height', label: 'Altura', min: 350, max: 2600 },
@@ -70,7 +80,35 @@ function changeKind(event: Event) {
         <small class="range-hint">{{ dimension.min }}–{{ dimension.max }} mm</small>
       </div>
     </div>
-    <div class="form-divider"><span>ACABAMENTO</span><small>3 opções</small></div>
+    <div class="form-divider"><span>ESTRUTURA</span><small>Montagem ilustrativa</small></div>
+    <fieldset class="segmented-options" aria-label="Estrutura do módulo">
+      <label v-for="option in structureOptions" :key="option.value">
+        <input
+          type="radio"
+          name="structure"
+          :value="option.value"
+          :checked="modelValue.structure === option.value"
+          @change="update('structure', option.value as StructureMode)"
+        />
+        <span>{{ option.label }}</span>
+      </label>
+    </fieldset>
+    <div class="form-field">
+      <label for="cabinet-front">Frente do módulo</label>
+      <div class="select-wrap">
+        <select
+          id="cabinet-front"
+          :value="modelValue.front"
+          @change="update('front', ($event.target as HTMLSelectElement).value as FrontMode)"
+        >
+          <option value="open">Sem portas</option>
+          <option value="doors">Duas portas</option>
+          <option value="drawers">Três frentes de gaveta (conceito)</option>
+        </select>
+      </div>
+      <small class="range-hint">Fundos com 6 mm nesta prévia. Sem ferragens ou usinagens.</small>
+    </div>
+    <div class="form-divider"><span>ACABAMENTO</span><small>4 opções</small></div>
     <div class="finish-options">
       <button
         v-for="(finish, id) in finishes"
@@ -236,5 +274,35 @@ function changeKind(event: Event) {
   .dimension-grid {
     gap: 12px 8px;
   }
+}
+</style>
+
+<style scoped>
+.segmented-options {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.segmented-options label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--muted-strong);
+}
+.segmented-options label:has(input:checked) {
+  border-color: var(--mint);
+  background: var(--active-nav);
+  color: var(--text);
+}
+.segmented-options input {
+  accent-color: var(--mint);
 }
 </style>

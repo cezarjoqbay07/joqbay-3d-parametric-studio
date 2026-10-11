@@ -39,7 +39,10 @@ function exportJson() {
       <div>
         <p class="eyebrow">PARAMETRIC WORKSPACE / 01</p>
         <h1>Configurador <span>3D.</span></h1>
-        <p>Da dimensão ao volume. Ajuste seu módulo e explore cada painel na cena interativa.</p>
+        <p>
+          Da dimensão às peças. Configure estrutura, portas e acabamento do seu módulo e explore
+          cada painel na cena interativa.
+        </p>
       </div>
       <div class="head-tags">
         <span class="tag accent"><span class="pulse" /> Geometria reativa</span
@@ -88,7 +91,7 @@ function exportJson() {
       <div class="panel-section-heading">
         <div>
           <p class="eyebrow">CONCEPTUAL PARTS</p>
-          <h2>Componentes do volume</h2>
+          <h2>Peças da prévia geométrica</h2>
           <p>Selecione uma peça na lista ou diretamente no 3D para destacá-la.</p>
         </div>
         <button type="button" class="secondary-button" :disabled="!preview" @click="exportJson">

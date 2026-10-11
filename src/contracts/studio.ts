@@ -1,6 +1,8 @@
-/** Contrato compartilhável com uma futura API HTTP. Sem dependência de Vue ou Three.js. */
-export type CabinetKind = 'base' | 'wall' | 'tower'
-export type FinishId = 'graphite' | 'oak' | 'linen'
+/** Contratos públicos do laboratório; independentes de Vue, NestJS e Three.js. */
+export type CabinetKind = 'counter' | 'wall' | 'tower'
+export type FinishId = 'graphite' | 'oak' | 'linen' | 'white'
+export type StructureMode = 'sides-through' | 'horizontal-through'
+export type FrontMode = 'open' | 'doors' | 'drawers'
 
 export interface CabinetConfig {
   kind: CabinetKind
@@ -10,15 +12,20 @@ export interface CabinetConfig {
   depth: number // mm
   thickness: number // mm
   finish: FinishId
+  structure: StructureMode
+  front: FrontMode
 }
 
+export type PanelRole = 'carcass' | 'back' | 'front'
 export interface PanelData {
   id: string
   label: string
-  // Dimensões físicas e centro geométrico em milímetros.
+  /** x = largura; y = altura; z = profundidade, tudo em milímetros. */
   size: readonly [number, number, number]
   position: readonly [number, number, number]
-  edge: 'carcass' | 'back'
+  edge: PanelRole
+  /** Na composição de ambiente, cada módulo mantém seu acabamento. */
+  color?: string
 }
 
 export interface CabinetPreview {
@@ -30,5 +37,10 @@ export interface CabinetPreview {
 }
 
 export type PreviewResult = { ok: true; data: CabinetPreview } | { ok: false; errors: string[] }
+export type AppView = 'home' | 'studio' | 'environment' | 'templates' | 'about'
 
-export type AppView = 'home' | 'studio' | 'templates' | 'about'
+export interface KitchenModule {
+  id: string
+  label: string
+  config: CabinetConfig
+}

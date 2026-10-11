@@ -1,42 +1,56 @@
 import { ref, watch } from 'vue'
 import { createLocalCabinetPreview } from '@/application/localPreviewAdapter'
 import { getPreset } from '@/application/studioPresets'
-import type { CabinetConfig, CabinetKind, FinishId } from '@/contracts/studio'
+import type {
+  CabinetConfig,
+  CabinetKind,
+  FinishId,
+  FrontMode,
+  StructureMode,
+} from '@/contracts/studio'
 
-const STORAGE_KEY = 'joqbay-studio-draft-v1'
+const STORAGE_KEY = 'joqbay-studio-draft-v2'
 function isCabinetKind(value: unknown): value is CabinetKind {
-  return value === 'base' || value === 'wall' || value === 'tower'
+  return value === 'counter' || value === 'wall' || value === 'tower'
 }
 function isFinish(value: unknown): value is FinishId {
-  return value === 'graphite' || value === 'oak' || value === 'linen'
+  return value === 'graphite' || value === 'oak' || value === 'linen' || value === 'white'
 }
 
+function isStructure(value: unknown): value is StructureMode {
+  return value === 'sides-through' || value === 'horizontal-through'
+}
+function isFront(value: unknown): value is FrontMode {
+  return value === 'open' || value === 'doors' || value === 'drawers'
+}
 function loadDraft(): CabinetConfig {
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') as Record<
-      string,
-      unknown
-    > | null
+    const stored = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem('joqbay-studio-draft-v1') ?? 'null',
+    ) as Record<string, unknown> | null
+    const kind = stored?.kind === 'base' ? 'counter' : stored?.kind
     if (
       !stored ||
-      !isCabinetKind(stored.kind) ||
+      !isCabinetKind(kind) ||
       !isFinish(stored.finish) ||
       typeof stored.name !== 'string'
     )
-      return getPreset('base')
+      return getPreset('counter')
     const config: CabinetConfig = {
-      kind: stored.kind,
+      kind,
       name: stored.name,
       finish: stored.finish,
       width: Number(stored.width),
       height: Number(stored.height),
       depth: Number(stored.depth),
       thickness: Number(stored.thickness),
+      structure: isStructure(stored.structure) ? stored.structure : 'sides-through',
+      front: isFront(stored.front) ? stored.front : 'open',
     }
-    if (!createLocalCabinetPreview(config).ok) return getPreset('base')
+    if (!createLocalCabinetPreview(config).ok) return getPreset('counter')
     return config
   } catch {
-    return getPreset('base')
+    return getPreset('counter')
   }
 }
 /** Persistência leve de rascunho na máquina do visitante; não há conta ou servidor. */
